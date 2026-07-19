@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Multi-Solución de Integridad Corporativa - Ley 30424</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #060b13;
+            --bg-panel: #0d1527;
+            --bg-card: #16223f;
+            --brand-primary: #2563eb;
+            --brand-success: #10b981;
+            --brand-danger: #f43f5e;
+            --brand-warning: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* BARRA LATERAL DE NAVEGACIÓN (HUB) */
+        .sidebar {
+            width: 320px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            flex-shrink: 0;
+        }
+        .sidebar-brand h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sidebar-brand p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            list-style: none;
+        }
+        .nav-item {
+            width: 100%;
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            padding: 14px 16px;
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+        }
+        .nav-item span {
+            font-size: 0.7rem;
+            color: var(--brand-primary);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 2px;
+            pointer-events: none; /* Evita interferencias en el click */
+        }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+            color: #fff;
+        }
+        .nav-item.active {
+            background: rgba(37, 99, 235, 0.1);
+            border-color: var(--brand-primary);
+            color: #fff;
+        }
+
+        /* ÁREA DE CONTENIDO CENTRAL */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* COMPONENTES DE TARJETAS Y LAYOUTS */
+        .card {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+        h3 { font-size: 1.25rem; margin-bottom: 15px; color: #fff; }
+        .desc { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 30px; }
+        
+        .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        
+        /* FORMULARIOS PROFESIONALES */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; color: var(--text-secondary); }
+        .input-control {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+        .input-control:focus { outline: none; border-color: var(--brand-primary); }
+        .btn {
+            background-color: var(--brand-primary);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background-color: #1d4ed8; }
+        .btn-success { background-color: var(--brand-success); }
+        .btn-success:hover { background-color: #047857; }
+
+        /* CONSOLA EN TIEMPO REAL */
+        .console {
+            background: #070b12;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #34d399;
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .console-body { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; }
+
+        /* ELEMENTOS DEL SIMULADOR DE DILEMAS Y TRIVIA */
+        .dilemma-box { background: var(--bg-card); padding: 20px; border-radius: 10px; border-left: 4px solid var(--brand-warning); }
+        .options-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .option-item {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: left;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+        .option-item:hover { background: rgba(255,255,255,0.02); border-color: var(--text-secondary); }
+
+        /* TABLA DE INCIDENTES */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        .data-table th { padding: 12px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+        .data-table td { padding: 14px 12px; border-bottom: 1px solid var(--border); }
+        .pill { padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .pill.danger { background: rgba(244,63,94,0.15); color: #fda4af; }
+        .pill.warning { background: rgba(245,158,11,0.15); color: #fde047; }
+        .pill.success { background: rgba(16,185,129,0.15); color: #a7f3d0; }
+
+        /* COMPONENTE INTERACTIVO DE BONOS (SLIDERS) */
+        .slider-container { background: var(--bg-card); padding: 20px; border-radius: 10px; margin-bottom: 15px; }
+        .slider-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .metric-display { font-family: var(--font-mono); font-weight: 700; color: var(--brand-success); }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR DE SOLUCIONES MÚLTIPLES -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h2>Integridad Hub Privado</h2>
+            <p>Framework Multi-Solución Anticorrupción[cite: 1]</p>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-target="solucion-denuncias">
+                <span>Solución 01 • RegTech[cite: 1]</span>Canal Anonimizado AI[cite: 1]
+            </li>
+            <li class="nav-item" data-target="solucion-licitaciones">
+                <span>Solución 02 • SaaS B2B[cite: 1]</span>Auditor ChainDecision[cite: 1]
+            </li>
+            <li class="nav-item" data-target="solucion-dilemas">
+                <span>Solución 03 • ComplianceTech[cite: 1]</span>Simulador Dilema360[cite: 1]
+            </li>
+            <li class="nav-item" data-target="solucion-incentivos">
+                <span>Solución 04 • HRTech[cite: 1]</span>Calculador Bonus Balance[cite: 1]
+            </li>
+            <li class="nav-item" data-target="solucion-monitor">
+                <span>Panel de Control[cite: 1]</span>Monitor de Incidentes[cite: 1]
+            </li>
+        </ul>
+    </div>
+
+    <!-- CONTENIDO DE LAS MÚLTIPLES SOLUCIONES -->
+    <div class="main-content">
+
+        <!-- SOLUCIÓN 1: CANAL DE DENUNCIAS ANÓNIMAS -->
+        <div id="solucion-denuncias" class="view-section active">
+            <h1>Solución 01: SpeakSafe AI (Canal Certificado)[cite: 1]</h1>
+            <p class="desc">Combate el temor a las represalias (60% de la métrica de campo)[cite: 1]. Encripta denuncias y altera metadatos para proteger al alertador de mandos superiores[cite: 1].</p>
+            
+            <div class="split-grid">
+                <div class="card">
+                    <h3>Formulario de Alerta Cifrada</h3>
+                    <form id="denunciaForm">
+                        <div class="form-group">
+                            <label>Tipificación de Delito (Ley 30424)[cite: 1]</label>
+                            <select id="denType" class="input-control">
+                                <option value="Soborno Comercial">Soborno entre Particulares (Art. 241-A)[cite: 1]</option>
+                                <option value="Conflicto de Interés">Conflicto de Interés No Declarado[cite: 1]</option>
+                                <option value="Fraude Interno">Fraude y Desvío Operacional de Suministros[cite: 1]</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Área Afectada</label>
+                            <select id="denArea" class="input-control">
+                                <option value="Compras">Compras y Abastecimiento[cite: 1]</option>
+                                <option value="Logística">Logística y Almacenes[cite: 1]</option>
+                                <option value="Operaciones">Operaciones Regionales[cite: 1]</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Hechos Detectados</label>
+                            <textarea id="denDesc" class="input-control" rows="4" placeholder="Describa el patrón o solicitud irregular detectada..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Cifrar y Enviar Reporte de Forma Segura[cite: 1]</button>
+                    </form>
+                </div>
+                <div class="console">
+                    <div class="console-header"><span>SPEAKSAFE CRYPTO ENGINE v1.2</span><span>ESTADO: SEGURO</span></div>
+                    <div id="denLogs" class="console-body">[INFO] Servidor aislado listo. Removiendo registros IPs del navegador corporativo...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOLUCIÓN 2: AUDITOR DE LICITACIONES -->
+        <div id="solucion-licitaciones" class="view-section">
+            <h1>Solución 02: ChainDecision SaaS (Auditoría de Compras)[cite: 1]</h1>
+            <p class="desc">Desmantela el favorecimiento de proveedores mediante cruce automatizado de bases de datos relacionales e inmutabilidad en Blockchain[cite: 1].</p>
+            
+            <div class="split-grid">
+                <div class="card">
+                    <h3>Simulador de Control de Licitación B2B</h3>
+                    <div class="form-group">
+                        <label>Proveedor Postulante</label>
+                        <select id="provSelect" class="input-control">
+                            <option value="safe">Corporación Industrial Peruana (Limpio)[cite: 1]</option>
+                            <option value="conflict">Inversiones Beta (Familiar de Mando Medio identificado)[cite: 1]</option>
+                            <option value="price">Suministros del Norte (Precios artificiales / Peaje)[cite: 1]</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" id="btnChainDecision">Escanear Estructura Societaria y Matriz Ética[cite: 1]</button>
+                </div>
+                <div class="console">
+                    <div class="console-header"><span>CHAINDECISION INTEGRITY ENGINE</span><span>LEDGER: CONECTADO</span></div>
+                    <div id="licLogs" class="console-body">[SYS] Nodo enlazado con el padrón histórico del ERP corporativo...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOLUCIÓN 3: SIMULADOR DE DILEMAS -->
+        <div id="solucion-dilemas" class="view-section">
+            <h1>Solución 03: Dilema360 (Compliance Training Adaptativo)[cite: 1]</h1>
+            <p class="desc">Capacitación aplicada basada en los riesgos reales del puesto de trabajo, destruyendo la ineficacia de la "legalidad estética"[cite: 1].</p>
+            
+            <div class="card">
+                <h3>Módulo de Entrenamiento: Presión por Resultados Financieros[cite: 1]</h3>
+                <div class="dilemma-box">
+                    <p><strong>Escenario Técnico de Campo:</strong> Te encuentras en el cierre trimestral y estás a un 3% de perder tu meta de ahorro y tu bono de permanencia[cite: 1]. Un proveedor de confianza te ofrece una rebaja inmediata en la cotización, pero te insinúa la contratación informal de su empresa consultora de transporte familiar[cite: 1]. ¿Cómo respondes?</p>
+                </div>
+                <div class="options-list">
+                    <button class="option-item" data-opt="1">A) Aceptas la cotización para salvar el KPI del área y dejas el control societario para el próximo trimestre[cite: 1].</button>
+                    <button class="option-item" data-opt="2">B) Rechazas el descuento, reportas la propuesta ambigua a través del canal anónimo y asumes el impacto en la meta del bono trimestral[cite: 1].</button>
+                    <button class="option-item" data-opt="3">C) Solicitas que el trato de transporte se realice a través de otra empresa intermediaria para evitar vinculaciones directas en la auditoría[cite: 1].</button>
+                </div>
+                <div id="dilemmaOutput" style="margin-top:20px; font-family:var(--font-mono); font-size:0.9rem;"></div>
+            </div>
+        </div>
+
+        <!-- SOLUCIÓN 4: CALCULADOR DE BONOS -->
+        <div id="solucion-incentivos" class="view-section">
+            <h1>Solución 04: Bonus Balance (Alineación de Incentivos de Talento)[cite: 1]</h1>
+            <p class="desc">Modifica estructuralmente el comportamiento corporativo[cite: 1]. Evita que las bonificaciones dependan al 100% del ahorro financiero inmediato, integrando KPIs de debida diligencia ética[cite: 1].</p>
+            
+            <div class="split-grid">
+                <div class="card">
+                    <h3>Configurador Matemático de Incentivos</h3>
+                    <div class="slider-container">
+                        <div class="slider-flex">
+                            <label>Peso del Logro Comercial / Rentabilidad</label>
+                            <span class="metric-display" id="valFinan">50%</span>
+                        </div>
+                        <input type="range" id="slideFinan" class="input-control" min="0" max="100" value="50">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-flex">
+                            <label>Peso de Cumplimiento / Debida Diligencia</label>
+                            <span class="metric-display" id="valEthic">50%</span>
+                        </div>
+                        <input type="range" id="slideEthic" class="input-control" min="0" max="100" value="50" disabled>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Simulación de Comportamiento Predicho</h3>
+                    <div id="bonusAnalysis" style="font-family:var(--font-mono); font-size:0.9rem; line-height:1.7;">
+                        <!-- JS Dinámico -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL DE CONTROL / MONITOR GLOBAL -->
+        <div id="solucion-monitor" class="view-section">
+            <h1>Consola de Control Central de Incidentes</h1>
+            <p class="desc">Monitoreo inalterable en tiempo real de las alertas procesadas por el ecosistema integral de la organización[cite: 1].</p>
+            
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Código Caso[cite: 1]</th>
+                            <th>Origen / Canal[cite: 1]</th>
+                            <th>Tipificación[cite: 1]</th>
+                            <th>Área Relacionada[cite: 1]</th>
+                            <th>Hash Criptográfico / Bloque[cite: 1]</th>
+                            <th>Estado de Mitigación[cite: 1]</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monitorTable">
+                        <tr>
+                            <td>#INC-4102</td>
+                            <td>SpeakSafe AI[cite: 1]</td>
+                            <td>Soborno entre particulares[cite: 1]</td>
+                            <td>Compras[cite: 1]</td>
+                            <td><span style="font-family:var(--font-mono);">0x9a8f...21c4</span></td>
+                            <td><span class="pill danger">En Investigación Independiente</span></td>
+                        </tr>
+                        <tr>
+                            <td>#INC-3982</td>
+                            <td>ChainDecision[cite: 1]</td>
+                            <td>Conflicto de Interés[cite: 1]</td>
+                            <td>Logística[cite: 1]</td>
+                            <td><span style="font-family:var(--font-mono);">0x3c4b...88aa</span></td>
+                            <td><span class="pill success">Bloqueado Automatizado</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LÓGICA DE INTERACCIÓN INTEGRADA CORREGIDA -->
+    <script>
+        // ESCUCHADOR DE NAVEGACIÓN COMPLETAMENTE SEGURO
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Quitar clase activa de todos los botones y secciones
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                
+                // Activar el panel seleccionado
+                this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+
+                // Forzar refresco si entra al calculador de bonos
+                if(targetId === 'solucion-incentivos') { 
+   
